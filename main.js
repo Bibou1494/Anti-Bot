@@ -14,7 +14,7 @@ client.on('messageCreate', async (message) => {
 
 	if (message.channel.name === 'antibot') {
 		console.log(`Bot account detected: ${message.author.tag}`);
-
+		await message.delete();
 		if (message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) {
 			try {
 				await message.member.ban({ reason: 'Bot account detected' });
