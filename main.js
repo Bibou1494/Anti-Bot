@@ -17,7 +17,7 @@ client.on('messageCreate', async (message) => {
 		await message.delete();
 		if (message.guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) {
 			try {
-				await message.member.ban({ reason: 'Bot account detected' });
+				await message.member.ban({ deleteMessageSeconds: 60 * 60 * 24 * 7, reason: 'Bot account detected' });
 				console.log(`Banned user: ${message.author.username}`);
 			}
 			catch (error) {
