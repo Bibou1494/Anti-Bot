@@ -172,10 +172,12 @@ function startServer(client) {
     
     const channels = guildObj.channels.cache
       .filter(c => c.type === 0)
+      .sort((a, b) => a.position - b.position)
       .map(c => ({ id: c.id, name: c.name }));
 
     const roles = guildObj.roles.cache
       .filter(r => r.name !== '@everyone')
+      .sort((a, b) => b.position - a.position)
       .map(r => ({ id: r.id, name: r.name, color: r.hexColor }));
 
     const config = Database.get(guildId);
