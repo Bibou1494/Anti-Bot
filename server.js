@@ -104,7 +104,7 @@ function startServer(client) {
         guilds: adminGuilds
       };
 
-      res.redirect('/dashboard.html');
+      res.redirect('/dashboard');
     } catch (error) {
       console.error('Error during Discord OAuth2 callback:', error);
       res.redirect('/?error=server_error');
@@ -240,11 +240,9 @@ function startServer(client) {
 
     res.json({ success: true, config: Database.get(guildId) });
   });
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'Not Found' });
-    }
-    next();
+
+  app.use('/api', (req, res) => {
+    res.status(404).json({ error: 'Not Found' });
   });
 
   app.listen(PORT, () => {
