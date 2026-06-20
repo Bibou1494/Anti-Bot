@@ -1,9 +1,9 @@
 {
-  "name": "fuckbot",
+  "name": "antibot",
   "version": "1.0.0",
   "description": "Anti-Bot Discord Bot",
   "license": "ISC",
-  "author": "",
+  "author": "GDMCPlayer(GDBibou1494)",
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "discord.js": "^14.26.4",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1"
