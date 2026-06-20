@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anti-Bot Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <svg style="width:0; height:0; position:absolute;" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="primary-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6366f1" />
+        <stop offset="100%" stop-color="#d946ef" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="bg-glow-container">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+  </div>
+
+  <header>
+    <a href="/dashboard.html" class="logo">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+      </svg>
+      <span>Anti-Bot</span>
+    </a>
+    <div id="header-user">
+      <div class="spinner"></div>
+    </div>
+  </header>
+
+  <main class="dashboard-container">
+    
+    <div id="server-selection-view">
+      <h1 class="dashboard-title">Select a Server</h1>
+      <p class="dashboard-subtitle">Choose a server you manage to configure the Anti-Bot protection.</p>
+      
+      <div class="server-grid" id="server-list-container">
+        <div style="grid-column: 1/-1; display:flex; justify-content:center; padding: 40px 0;">
+          <div class="spinner" style="width: 40px; height: 40px; border-width: 3px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="config-view" style="display: none;">
+      <div class="config-header">
+        <div>
+          <a class="config-back-btn" onclick="showServerList()">
+            <svg style="width: 18px; height: 18px; fill: currentColor;" viewBox="0 0 24 24">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+            Back to Servers
+          </a>
+          <div class="config-server-details">
+            <div id="config-server-icon" class="server-icon"></div>
+            <h2 id="config-server-title">Server Settings</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-layout glass-panel">
+        <div class="config-tabs">
+          <button class="tab-btn active" onclick="switchTab('general', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            General Settings
+          </button>
+          <button class="tab-btn" onclick="switchTab('punishment', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Punishment Config
+          </button>
+          <button class="tab-btn" onclick="switchTab('whitelists', this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            Whitelists
+          </button>
+        </div>
+
+        <div class="config-content">
+          <form id="config-form" onsubmit="saveConfig(event)">
+            
+            <div id="tab-general" class="config-section active">
+              <h3>General Settings</h3>
+              
+              <div class="switch-group">
+                <div class="switch-info">
+                  <span class="switch-label">Enable Anti-Bot</span>
+                  <span class="switch-desc">Toggle to enable or disable protection in this server.</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="field-enabled">
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label for="field-target-channel">Quarantine Target Channel</label>
+                <div class="label-desc">Messages sent here by normal users will trigger the Anti-Bot defenses.</div>
+                <select id="field-target-channel" class="form-select">
+                  <option value="">Fallback (#antibot)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="field-log-channel">Audit Logs Channel</label>
+                <div class="label-desc">The bot will send security reports and embed updates here.</div>
+                <select id="field-log-channel" class="form-select">
+                  <option value="">Fallback (#antibot-logs)</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="tab-punishment" class="config-section">
+              <h3>Punishment Config</h3>
+              
+              <div class="form-group">
+                <label for="field-action">Moderation Action</label>
+                <div class="label-desc">Choose what the bot does when a spam account is detected.</div>
+                <select id="field-action" class="form-select" onchange="togglePunishmentFields()">
+                  <option value="ban">Instant Ban</option>
+                  <option value="kick">Instant Kick</option>
+                  <option value="timeout">Timeout (24 Hours)</option>
+                  <option value="none">Delete Message Only (No Penalty)</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="group-delete-history">
+                <label for="field-delete-history">Delete Message History</label>
+                <div class="label-desc">Delete messages sent by the user in this server over a duration.</div>
+                <select id="field-delete-history" class="form-select">
+                  <option value="0">Don't Delete Any Messages</option>
+                  <option value="86400">Previous 24 Hours</option>
+                  <option value="604800" selected>Previous 7 Days</option>
+                </select>
+              </div>
+
+              <div class="form-group" id="group-reason">
+                <label for="field-reason">Audit Log Reason</label>
+                <div class="label-desc">Reason shown in the server's Audit Logs for this action.</div>
+                <input type="text" id="field-reason" class="form-input" placeholder="Bot account detected">
+              </div>
+            </div>
+
+            <div id="tab-whitelists" class="config-section">
+              <h3>Whitelists</h3>
+              
+              <div class="form-group">
+                <label>Whitelisted Roles</label>
+                <div class="label-desc">Select roles that are immune to anti-bot measures.</div>
+                <div class="role-selector-list" id="role-selector-container">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="field-bypass-users">Whitelisted User IDs</label>
+                <div class="label-desc">Comma-separated list of User IDs that are immune (e.g. 1042304918239023, 23094823984923).</div>
+                <input type="text" id="field-bypass-users" class="form-input" placeholder="ID1, ID2, ID3">
+              </div>
+            </div>
+
+            <div class="config-footer">
+              <button type="button" class="btn-secondary" onclick="showServerList()">Cancel</button>
+              <button type="submit" class="btn-primary" id="save-btn">
+                <span>Save Changes</span>
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
