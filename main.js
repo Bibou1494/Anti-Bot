@@ -1,6 +1,6 @@
 const { Client, Events, GatewayIntentBits, PermissionFlagsBits } = require('discord.js');
 require('dotenv').config();
-const { Database, init: initDb } = require('./database');
+const { Database, init: initDb, shutdown: shutdownDb } = require('./database');
 const startServer = require('./server');
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -10,6 +10,23 @@ process.on('unhandledRejection', (reason, promise) => {
 process.on('uncaughtException', (error) => {
 	console.error('[uncaughtException] Uncaught exception:', error);
 });
+
+async function gracefulShutdown(signal) {
+	console.log(`\n[Shutdown] Signal ${signal} reçu. Arrêt propre...`);
+	try {
+		client.destroy();
+		console.log('[Shutdown] Client Discord déconnecté.');
+	}
+	catch (e) { }
+	try {
+		await shutdownDb();
+	}
+	catch (e) { }
+	process.exit(0);
+}
+
+process.on('SIGINT',  () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 const client = new Client({
 	intents: [

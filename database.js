@@ -122,4 +122,10 @@ const Database = {
 	},
 };
 
-module.exports = { Database, init };
+async function shutdown() {
+	await pool.end();
+	console.log('[Database] Connection pool closed.');
+}
+
+module.exports = { Database, init, shutdown };
+
