@@ -1,0 +1,20 @@
+# Uses node:20-alpine
+FROM node:20-alpine
+
+# That's the work directory
+WORKDIR /usr/src/app
+
+# It copies everything that starts with package
+COPY package*.json ./
+
+# Installing dependencies... Yep that's it
+RUN npm ci --only=production
+
+# Well copy the rest of the code
+COPY . .
+
+# (just read)
+EXPOSE 3000
+
+# Start the bot using node (I'm not sure if you need that but whatever)
+CMD [ "node", "." ]
