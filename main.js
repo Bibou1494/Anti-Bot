@@ -1,6 +1,6 @@
 const { Client, Events, GatewayIntentBits, PermissionFlagsBits } = require('discord.js');
 require('dotenv').config();
-const Database = require('./database');
+const { Database, init: initDb } = require('./database');
 const startServer = require('./server');
 
 process.on('unhandledRejection', (reason, promise) => {
@@ -61,7 +61,7 @@ client.on('messageCreate', async (message) => {
 	if (!message.guild || message.author.bot) return;
 
 	const guildId = message.guild.id;
-	const config = Database.get(guildId);
+	const config = await Database.get(guildId);
 
 	if (!config.enabled) return;
 	const isMonitoredChannel = config.targetChannelId
@@ -204,7 +204,18 @@ client.on('messageCreate', async (message) => {
 	}
 });
 
-client.login(process.env.TOKEN).catch((err) => {
-	console.error('[Discord Login] Failed to login:', err.message);
-	console.error('Please check that your TOKEN in .env is valid.');
-});
+(async () => {
+	try {
+		await initDb();
+	}
+	catch (err) {
+		console.error('[Database] Failed to connect to MariaDB:', err.message);
+		console.error('Please check your DB_* variables in .env. Exiting.');
+		process.exit(1);
+	}
+
+	client.login(process.env.TOKEN).catch((err) => {
+		console.error('[Discord Login] Failed to login:', err.message);
+		console.error('Please check that your TOKEN in .env is valid.');
+	});
+})();

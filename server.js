@@ -1,7 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const Database = require('./database');
+const { Database } = require('./database');
 
 function startServer(client) {
   const app = express();
@@ -160,7 +160,7 @@ function startServer(client) {
     next();
   }
 
-  app.get('/api/guilds/:guildId/config', requireAuth, checkGuildPermission, (req, res) => {
+  app.get('/api/guilds/:guildId/config', requireAuth, checkGuildPermission, async (req, res) => {
     const { guildId } = req.params;
     const isBotInGuild = client.guilds.cache.has(guildId);
 
@@ -180,7 +180,7 @@ function startServer(client) {
       .sort((a, b) => b.position - a.position)
       .map(r => ({ id: r.id, name: r.name, color: r.hexColor }));
 
-    const config = Database.get(guildId);
+    const config = await Database.get(guildId);
 
     res.json({
       guildName: guildObj.name,
@@ -191,7 +191,7 @@ function startServer(client) {
     });
   });
 
-  app.post('/api/guilds/:guildId/config', requireAuth, checkGuildPermission, (req, res) => {
+  app.post('/api/guilds/:guildId/config', requireAuth, checkGuildPermission, async (req, res) => {
     const { guildId } = req.params;
     const isBotInGuild = client.guilds.cache.has(guildId);
 
@@ -238,9 +238,9 @@ function startServer(client) {
         .filter(id => /^\d+$/.test(id));
     }
 
-    Database.set(guildId, updatedConfig);
+    await Database.set(guildId, updatedConfig);
 
-    res.json({ success: true, config: Database.get(guildId) });
+    res.json({ success: true, config: await Database.get(guildId) });
   });
 
   app.use('/api', (req, res) => {
