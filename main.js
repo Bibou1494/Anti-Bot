@@ -3,12 +3,44 @@ require('dotenv').config();
 const Database = require('./database');
 const startServer = require('./server');
 
+process.on('unhandledRejection', (reason, promise) => {
+	console.error('[unhandledRejection] Unhandled promise rejection:', reason);
+});
+
+process.on('uncaughtException', (error) => {
+	console.error('[uncaughtException] Uncaught exception:', error);
+});
+
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.MessageContent,
 	],
+});
+
+let reconnectAttempts = 0;
+const MAX_RECONNECT_DELAY_MS = 60_000;
+
+client.on('error', (error) => {
+	reconnectAttempts++;
+	const delay = Math.min(5_000 * reconnectAttempts, MAX_RECONNECT_DELAY_MS);
+	console.error(`[Discord WS Error] ${error.message}`);
+	console.warn(`[Discord WS] Reconnecting in ${delay / 1000}s... (attempt #${reconnectAttempts})`);
+	setTimeout(() => {
+		client.login(process.env.TOKEN).catch((err) => {
+			console.error('[Discord Login] Failed to reconnect:', err.message);
+		});
+	}, delay);
+});
+
+client.on('shardReconnecting', (id) => {
+	console.warn(`[Discord WS] Shard ${id} reconnecting...`);
+});
+
+client.on('shardResume', (id) => {
+	reconnectAttempts = 0;
+	console.log(`[Discord WS] Shard ${id} resumed successfully.`);
 });
 
 client.once(Events.ClientReady, (readyClient) => {
@@ -172,4 +204,7 @@ client.on('messageCreate', async (message) => {
 	}
 });
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN).catch((err) => {
+	console.error('[Discord Login] Failed to login:', err.message);
+	console.error('Please check that your TOKEN in .env is valid.');
+});
