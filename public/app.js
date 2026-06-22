@@ -75,7 +75,7 @@ function renderServers(guilds) {
     if (guild.botInGuild) {
       actionBtnHtml = `<button class="btn-primary" onclick="configureGuild('${guild.id}')">Configure</button>`;
     } else {
-      const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=8&scope=bot&guild_id=${guild.id}&disable_guild_select=true`;
+      const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=4&scope=bot&guild_id=${guild.id}&disable_guild_select=true`;
       actionBtnHtml = `<a href="${inviteUrl}" target="_blank" class="btn-secondary" onclick="setTimeout(init, 3000)">Invite Bot</a>`;
     }
 
